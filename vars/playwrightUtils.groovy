@@ -21,7 +21,7 @@ def publishAllure() {
     ])
 }
 
-def publishHTML() {
+def publishHtmlReport() {
     echo "Publishing Playwright HTML Report..."
     publishHTML([
         allowMissing: true,
