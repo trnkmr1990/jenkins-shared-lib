@@ -1,34 +1,47 @@
-def installDependencies() {
-    echo "Installing dependencies..."
-    retry(2) {
-        bat "npm ci"
+@Library('playwright-lib') _
+
+pipeline {
+    agent any
+
+    tools {
+        nodejs 'Node20'
     }
-}
 
-def runTests() {
-    echo "Running Playwright tests..."
-    retry(2) {
-        bat "npx playwright test"
+    environment {
+        CI = "true"
     }
-}
 
-def publishAllure() {
-    echo "Publishing Allure Report..."
-    allure([
-        includeProperties: false,
-        jdk: '',
-        results: [[path: "allure-results"]]
-    ])
-}
+    stages {
 
-def publishHTML() {
-    echo "Publishing Playwright HTML Report..."
-    publishHTML([
-        allowMissing: true,
-        alwaysLinkToLastBuild: true,
-        keepAll: true,
-        reportDir: "playwright-report",
-        reportFiles: "index.html",
-        reportName: "Playwright HTML Report"
-    ])
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                script {                         // ✔ Required for calling library steps
+                    installDependencies()
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                script {                         // ✔ Must be inside script block
+                    runTests()
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            script {                             // ✔ Required in post block too
+                publishAllure()
+                publishHTML()
+            }
+        }
+    }
 }
