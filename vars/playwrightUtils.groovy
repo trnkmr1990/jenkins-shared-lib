@@ -23,7 +23,7 @@ def publishAllure() {
 
 def publishJUnitReport(){
     echo "Publishing JUnit Report..."
-    junit allowEmptyResults: true, skipMarkingBuildUnstable: true, testResults: 'junit-results/*.xml'
+    junit allowEmptyResults: true, skipMarkingBuildUnstable: true, testResults: 'test-results/*.xml'
 }
 
 def publishHtmlReport() {
